@@ -417,197 +417,175 @@ int main(int argc, char** argv) {
 ## Task 3: Parallelogram with Transformations
 
 ### Objective
-Draw shape #3 from the reference image (a parallelogram) and apply geometric transformations including rotation, scaling, and reflection.
+Draw shape (a parallelogram) and apply geometric transformations including rotation, scaling, and reflection.
 
-### Code Implementation (Single Main Function Approach)
+## Code Implementation
+
 ```cpp
-#include <GL/glut.h>
-#include <cmath>
+#include <GL/glut.h>  // Include the GLUT library
+#include <cmath>      // Include for mathematical functions
 
+// Display callback function that GLUT requires
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);  // Clear the screen
+
+    // All drawing code inside the display function
+    // Draw the parallelogram with transformations
+    
+    glPushMatrix();
+    
+    // Rotation Transformation
+    glTranslatef(0.5f, 0.5f, 0.0f);  // Move to rotation center
+    glRotatef(45.0f, 0.0f, 0.0f, 1.0f);  // Rotate 45 degrees clockwise
+    glTranslatef(-0.5f, -0.5f, 0.0f);  // Move back
+
+    // Scaling Transformation
+    glScalef(1.5f, 0.8f, 1.0f);  // Scale x by 1.5 and y by 0.8
+
+    // Reflection (X-axis)
+    glScalef(1.0f, -1.0f, 1.0f);  // Flip vertically
+    
+    // Draw the parallelogram directly here instead of calling a function
+    glBegin(GL_QUADS);  // Use quads to draw the parallelogram
+    glColor3f(1.0f, 0.5f, 0.5f);  // Light red color
+
+    // Four vertices of the parallelogram
+    glVertex2f(-0.4f, -0.2f);  // Bottom-left
+    glVertex2f(0.1f, -0.2f);   // Bottom-right
+    glVertex2f(0.4f, 0.2f);    // Top-right
+    glVertex2f(-0.1f, 0.2f);   // Top-left
+
+    glEnd();
+    
+    glPopMatrix();
+
+    glFlush();  // Render the drawing
+}
+
+// Main function
 int main(int argc, char** argv) {
-    // Initialize GLUT
-    glutInit(&argc, argv);
-    glutCreateWindow("Parallelogram Transformations");
-    glutInitWindowSize(600, 600);
-    
-    // Define the display callback function using a lambda
-    glutDisplayFunc([]() {
-        // Clear the screen
-        glClear(GL_COLOR_BUFFER_BIT);
-        
-        // Push matrix to save current state
-        glPushMatrix();
-        
-        // Apply transformations
-        // Translation to rotation center
-        glTranslatef(0.5f, 0.5f, 0.0f);
-        // Rotate 45 degrees clockwise around z-axis
-        glRotatef(45.0f, 0.0f, 0.0f, 1.0f);
-        // Translate back
-        glTranslatef(-0.5f, -0.5f, 0.0f);
-        
-        // Scale: x by 1.5 and y by 0.8
-        glScalef(1.5f, 0.8f, 1.0f);
-        
-        // Reflect across X-axis
-        glScalef(1.0f, -1.0f, 1.0f);
-        
-        // Draw the parallelogram
-        glBegin(GL_QUADS);
-        glColor3f(1.0f, 0.5f, 0.5f);  // Light red color
-        
-        // Four vertices of parallelogram
-        glVertex2f(-0.4f, -0.2f);  // Bottom-left
-        glVertex2f(0.1f, -0.2f);   // Bottom-right
-        glVertex2f(0.4f, 0.2f);    // Top-right
-        glVertex2f(-0.1f, 0.2f);   // Top-left
-        
-        glEnd();
-        
-        // Restore the original matrix state
-        glPopMatrix();
-        
-        // Force execution of OpenGL commands
-        glFlush();
-    });
-    
-    // Set background color to black
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    
-    // Enter the GLUT event processing loop
-    glutMainLoop();
-    
+    glutInit(&argc, argv);  // Initialize the GLUT library
+    glutCreateWindow("Parallelogram Transformations");  // Create a window
+    glutInitWindowSize(600, 600);  // Set window size
+    glutDisplayFunc(display);  // Set the display function
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // Background color (black)
+    glutMainLoop();  // Enter the event-processing loop
     return 0;
 }
 ```
 
-### Line-by-Line Explanation
+## Code Explanation
 
-1. **Header Inclusion**:
-   ```cpp
-   #include <GL/glut.h>
-   #include <cmath>
-   ```
-   - Includes GLUT library and mathematical functions.
+### Header Files
+```cpp
+#include <GL/glut.h>  // Include the GLUT library
+#include <cmath>      // Include for mathematical functions
+```
+- **GL/glut.h**: The OpenGL Utility Toolkit (GLUT) provides functions for window management, handling user input, and creating an OpenGL rendering context
+- **cmath**: Includes standard C++ mathematical functions, although not directly used in this implementation
 
-2. **Main Function and GLUT Initialization**:
-   ```cpp
-   int main(int argc, char** argv) {
-       glutInit(&argc, argv);
-       glutCreateWindow("Parallelogram Transformations");
-       glutInitWindowSize(600, 600);
-   ```
-   - Initializes GLUT and creates a 600×600 window.
+### Display Function
+```cpp
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);  // Clear the screen
+```
+- **Purpose**: This is the main rendering function called by GLUT whenever the window needs to be redrawn
+- **Return Type**: void (no return value)
+- **Parameters**: None
+- **glClear(GL_COLOR_BUFFER_BIT)**: Clears the color buffer (screen) to the color specified by glClearColor()
 
-3. **Display Callback Function**:
-   ```cpp
-   glutDisplayFunc([]() {
-       glClear(GL_COLOR_BUFFER_BIT);
-   ```
-   - Uses a C++ lambda function as the display callback.
-   - Clears the color buffer before drawing.
+### Matrix Operations
+```cpp
+    glPushMatrix();
+```
+- **glPushMatrix()**: Saves the current transformation matrix on the stack
+- This allows us to apply transformations and later restore the original state
 
-4. **Matrix Operations**:
-   ```cpp
-   glPushMatrix();
-   ```
-   - Saves the current transformation matrix on the stack.
+### Rotation Transformation
+```cpp
+    // Rotation Transformation
+    glTranslatef(0.5f, 0.5f, 0.0f);  // Move to rotation center
+    glRotatef(45.0f, 0.0f, 0.0f, 1.0f);  // Rotate 45 degrees clockwise
+    glTranslatef(-0.5f, -0.5f, 0.0f);  // Move back
+```
+- **Purpose**: Rotates the parallelogram around the point (0.5, 0.5)
+- **glTranslatef(0.5f, 0.5f, 0.0f)**: Translates to the rotation center
+- **glRotatef(45.0f, 0.0f, 0.0f, 1.0f)**: Rotates 45 degrees around the Z-axis (the axis perpendicular to the screen)
+- **glTranslatef(-0.5f, -0.5f, 0.0f)**: Translates back to the original position
+- The combination of these three operations achieves rotation around a specific point rather than the origin
 
-5. **Rotation Around a Point**:
-   ```cpp
-   // Translation to rotation center
-   glTranslatef(0.5f, 0.5f, 0.0f);
-   // Rotate 45 degrees clockwise around z-axis
-   glRotatef(45.0f, 0.0f, 0.0f, 1.0f);
-   // Translate back
-   glTranslatef(-0.5f, -0.5f, 0.0f);
-   ```
-   - This sequence performs rotation around point (0.5, 0.5):
-     1. First translates to the rotation center
-     2. Applies a 45-degree rotation around the Z-axis
-     3. Translates back to preserve position
+### Scaling Transformation
+```cpp
+    // Scaling Transformation
+    glScalef(1.5f, 0.8f, 1.0f);  // Scale x by 1.5 and y by 0.8
+```
+- **glScalef(1.5f, 0.8f, 1.0f)**: Scales the shape by factor 1.5 along the X-axis and 0.8 along the Y-axis
+- This makes the parallelogram wider horizontally and shorter vertically
 
-6. **Scaling**:
-   ```cpp
-   // Scale: x by 1.5 and y by 0.8
-   glScalef(1.5f, 0.8f, 1.0f);
-   ```
-   - Stretches the shape horizontally by 1.5× and compresses it vertically by 0.8×.
+### Reflection Transformation
+```cpp
+    // Reflection (X-axis)
+    glScalef(1.0f, -1.0f, 1.0f);  // Flip vertically
+```
+- **glScalef(1.0f, -1.0f, 1.0f)**: Reflects the shape across the X-axis by scaling the Y coordinate by -1
+- This causes the parallelogram to be flipped upside down
 
-7. **Reflection**:
-   ```cpp
-   // Reflect across X-axis
-   glScalef(1.0f, -1.0f, 1.0f);
-   ```
-   - Flips the shape vertically by scaling the y-coordinate by -1.
+### Drawing the Parallelogram
+```cpp
+    // Draw the parallelogram directly here instead of calling a function
+    glBegin(GL_QUADS);  // Use quads to draw the parallelogram
+    glColor3f(1.0f, 0.5f, 0.5f);  // Light red color
 
-8. **Drawing the Parallelogram**:
-   ```cpp
-   glBegin(GL_QUADS);
-   glColor3f(1.0f, 0.5f, 0.5f);  // Light red color
-   
-   // Four vertices of parallelogram
-   glVertex2f(-0.4f, -0.2f);  // Bottom-left
-   glVertex2f(0.1f, -0.2f);   // Bottom-right
-   glVertex2f(0.4f, 0.2f);    // Top-right
-   glVertex2f(-0.1f, 0.2f);   // Top-left
-   
-   glEnd();
-   ```
-   - Sets color to light red.
-   - Defines the parallelogram using four vertices in GL_QUADS mode.
+    // Four vertices of the parallelogram
+    glVertex2f(-0.4f, -0.2f);  // Bottom-left
+    glVertex2f(0.1f, -0.2f);   // Bottom-right
+    glVertex2f(0.4f, 0.2f);    // Top-right
+    glVertex2f(-0.1f, 0.2f);   // Top-left
 
-9. **Restoring Matrix State**:
-   ```cpp
-   glPopMatrix();
-   ```
-   - Restores the previously saved transformation matrix.
+    glEnd();
+```
+- **glBegin(GL_QUADS)**: Begins defining a quadrilateral (four-sided polygon)
+- **glColor3f(1.0f, 0.5f, 0.5f)**: Sets the drawing color to light red (RGB values)
+- **glVertex2f()**: Specifies the four vertices of the parallelogram using floating-point coordinates
+- **glEnd()**: Ends the definition of the primitive
+- The vertices are specified in counter-clockwise order, which is the standard winding order in OpenGL
 
-10. **Rendering and Main Loop**:
-    ```cpp
-    glFlush();
-    });
-    
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glutMainLoop();
-    
+### Finishing the Rendering
+```cpp
+    glPopMatrix();
+    glFlush();  // Render the drawing
+}
+```
+- **glPopMatrix()**: Restores the previously saved transformation matrix
+- **glFlush()**: Forces execution of all OpenGL commands, ensuring all drawing operations are processed
+
+### Main Function
+```cpp
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);  // Initialize the GLUT library
+    glutCreateWindow("Parallelogram Transformations");  // Create a window
+    glutInitWindowSize(600, 600);  // Set window size
+    glutDisplayFunc(display);  // Set the display function
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // Background color (black)
+    glutMainLoop();  // Enter the event-processing loop
     return 0;
-    ```
-    - `glFlush()`: Forces execution of OpenGL commands.
-    - `glClearColor()`: Sets the background color to black.
-    - `glutMainLoop()`: Enters the event processing loop.
+}
+```
+- **Purpose**: Entry point of the program
+- **Return Type**: int (standard for main functions)
+- **Parameters**: 
+  - **argc**: Count of command-line arguments
+  - **argv**: Array of command-line argument strings
+- **glutInit(&argc, argv)**: Initializes the GLUT library and processes command-line arguments
+- **glutCreateWindow("Parallelogram Transformations")**: Creates a window with the specified title
+- **glutInitWindowSize(600, 600)**: Sets the initial window size to 600×600 pixels
+- **glutDisplayFunc(display)**: Registers the display function as the callback for rendering
+- **glClearColor(0.0f, 0.0f, 0.0f, 1.0f)**: Sets the background color to black (RGBA values)
+- **glutMainLoop()**: Enters the GLUT event processing loop, which handles drawing and user interaction
 
-## Summary of OpenGL Functions Used
-
-1. **Window Management**:
-   - `glutInit(&argc, argv)`: Initializes GLUT library
-   - `glutInitDisplayMode()`: Sets display mode (buffering and color model)
-   - `glutInitWindowSize()`: Sets window dimensions
-   - `glutCreateWindow()`: Creates a named window
-   - `glutMainLoop()`: Enters the event processing loop
-
-2. **Coordinate System Setup**:
-   - `gluOrtho2D()`: Sets up a 2D coordinate system
-   - `glLoadIdentity()`: Resets the current matrix to identity
-
-3. **Drawing Functions**:
-   - `glBegin()/glEnd()`: Delimits vertex specifications for primitives
-   - `glVertex2i()/glVertex2f()`: Specifies vertex coordinates (integer/float)
-   - `glColor3f()`: Sets the current drawing color
-   - `glClear()`: Clears buffers to preset values
-   - `glClearColor()`: Specifies clear values for the color buffer
-   - `glFlush()`: Forces execution of OpenGL commands
-
-4. **Transformation Functions**:
-   - `glPushMatrix()/glPopMatrix()`: Saves/restores the current matrix
-   - `glTranslatef()`: Multiplies the current matrix by a translation matrix
-   - `glRotatef()`: Multiplies the current matrix by a rotation matrix
-   - `glScalef()`: Multiplies the current matrix by a scaling matrix
-
-5. **Primitive Types**:
-   - `GL_QUADS`: Four-vertex quadrilaterals
-   - `GL_TRIANGLES`: Three-vertex triangles
-   - `GL_POLYGON`: Multiple-vertex convex polygons
-   - `GL_TRIANGLE_FAN`: Triangle fan primitive (first vertex is center)
+## Transformations Applied
+1. **Rotation**: The parallelogram is rotated 45 degrees clockwise around the point (0.5, 0.5)
+2. **Scaling**: The shape is stretched horizontally (1.5×) and compressed vertically (0.8×)
+3. **Reflection**: The parallelogram is reflected across the X-axis
 
 These three tasks demonstrate fundamental OpenGL concepts for 2D graphics programming, including primitive drawing, color setting, transformations, and drawing techniques for creating complex scenes.
