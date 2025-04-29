@@ -417,5 +417,336 @@ int main(int argc, char** argv) {
 ## Task 3: Parallelogram with Transformations
 
 ### Objective
-Draw shape (a parallelogram) and apply geometric transformations including rotation, scaling, and reflection.
+Create a visualization of various 2D transformations (translation, scaling, rotation, and reflection) applied to a parallelogram using OpenGL.
 
+### Code Implementation
+```cpp
+#include <GL/glut.h>
+#include <cmath>
+
+// Function to draw a translated parallelogram
+void translate_shape(float tx, float ty) {
+    glColor3f(1.0f, 0.5f, 0.5f); // Light red
+    glBegin(GL_QUADS);
+    glVertex2f(260 + tx, 290 + ty);
+    glVertex2f(270 + tx, 330 + ty);
+    glVertex2f(320 + tx, 330 + ty);
+    glVertex2f(310 + tx, 290 + ty);
+    glEnd();
+}
+
+// Function to draw a scaled parallelogram
+void scale_shape(float sx, float sy) {
+    glColor3f(0.5f, 1.0f, 0.5f); // Light green
+    glBegin(GL_QUADS);
+    float cx = 290, cy = 310;
+    glVertex2f((260 - cx) * sx + cx, (290 - cy) * sy + cy);
+    glVertex2f((270 - cx) * sx + cx, (330 - cy) * sy + cy);
+    glVertex2f((320 - cx) * sx + cx, (330 - cy) * sy + cy);
+    glVertex2f((310 - cx) * sx + cx, (290 - cy) * sy + cy);
+    glEnd();
+}
+
+// Function to rotate the parallelogram
+void rotate_shape(float angle) {
+    glColor3f(0.5f, 0.5f, 1.0f); // Light blue
+    glBegin(GL_QUADS);
+    float cx = 290, cy = 310;
+    float rad = angle * 3.14159f / 180.0f;
+    float cosA = cos(rad);
+    float sinA = sin(rad);
+    glVertex2f(cosA * (260 - cx) - sinA * (290 - cy) + cx, 
+               sinA * (260 - cx) + cosA * (290 - cy) + cy);
+    glVertex2f(cosA * (270 - cx) - sinA * (330 - cy) + cx, 
+               sinA * (270 - cx) + cosA * (330 - cy) + cy);
+    glVertex2f(cosA * (320 - cx) - sinA * (330 - cy) + cx, 
+               sinA * (320 - cx) + cosA * (330 - cy) + cy);
+    glVertex2f(cosA * (310 - cx) - sinA * (290 - cy) + cx, 
+               sinA * (310 - cx) + cosA * (290 - cy) + cy);
+    glEnd();
+}
+
+// Function to reflect the parallelogram over x-axis
+void reflect_shape_x() {
+    glColor3f(1.0f, 1.0f, 0.5f); // Light yellow
+    glBegin(GL_QUADS);
+    float cy = 310; // Reflection axis is y=cy
+    glVertex2f(260, 2*cy - 290);
+    glVertex2f(270, 2*cy - 330);
+    glVertex2f(320, 2*cy - 330);
+    glVertex2f(310, 2*cy - 290);
+    glEnd();
+}
+
+// Function to reflect the parallelogram over y-axis
+void reflect_shape_y() {
+    glColor3f(1.0f, 1.0f, 0.5f); // Light yellow
+    glBegin(GL_QUADS);
+    float cx = 290; // Reflection axis is x=cx
+    glVertex2f(2*cx - 260, 290);
+    glVertex2f(2*cx - 270, 330);
+    glVertex2f(2*cx - 320, 330);
+    glVertex2f(2*cx - 310, 290);
+    glEnd();
+}
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    // Original shape (center)
+    glColor3f(1.0f, 1.0f, 1.0f); // White
+    glBegin(GL_QUADS);
+    glVertex2f(260, 290);
+    glVertex2f(270, 330);
+    glVertex2f(320, 330);
+    glVertex2f(310, 290);
+    glEnd();
+    
+    // Translated (bottom-left)
+    translate_shape(-150, -150);
+    
+    // Scaled (top-right)
+    glPushMatrix();
+    glTranslatef(150, 150, 0);
+    scale_shape(1.5f, 1.5f);
+    glPopMatrix();
+    
+    // Rotated (top-left)
+    glPushMatrix();
+    glTranslatef(-150, 150, 0);
+    rotate_shape(45);
+    glPopMatrix();
+    
+    // Reflected over y-axis (bottom-right)
+    glPushMatrix();
+    glTranslatef(150, -150, 0);
+    reflect_shape_y();
+    glPopMatrix();
+    
+    glFlush();
+}
+
+void init() {
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glMatrixMode(GL_PROJECTION);
+    gluOrtho2D(0.0, 600.0, 0.0, 600.0);
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitWindowSize(600, 600);
+    glutCreateWindow("Parallelogram Transformations");
+    init();
+    glutDisplayFunc(display);
+    glutMainLoop();
+    return 0;
+}
+```
+
+### Line-by-Line Explanation
+
+1. **Header Inclusion**:
+   ```cpp
+   #include <GL/glut.h>
+   #include <cmath>
+   ```
+   - Includes the GLUT library for OpenGL functionality and the cmath library for mathematical functions (sin, cos).
+
+2. **Translation Function**:
+   ```cpp
+   void translate_shape(float tx, float ty) {
+       glColor3f(1.0f, 0.5f, 0.5f); // Light red
+       glBegin(GL_QUADS);
+       glVertex2f(260 + tx, 290 + ty);
+       glVertex2f(270 + tx, 330 + ty);
+       glVertex2f(320 + tx, 330 + ty);
+       glVertex2f(310 + tx, 290 + ty);
+       glEnd();
+   }
+   ```
+   - Sets the color to light red.
+   - Creates a parallelogram by adding the translation values (`tx`, `ty`) to each vertex coordinate.
+   - Translation is a simple addition of offset values to the original coordinates.
+
+3. **Scaling Function**:
+   ```cpp
+   void scale_shape(float sx, float sy) {
+       glColor3f(0.5f, 1.0f, 0.5f); // Light green
+       glBegin(GL_QUADS);
+       float cx = 290, cy = 310;
+       glVertex2f((260 - cx) * sx + cx, (290 - cy) * sy + cy);
+       glVertex2f((270 - cx) * sx + cx, (330 - cy) * sy + cy);
+       glVertex2f((320 - cx) * sx + cx, (330 - cy) * sy + cy);
+       glVertex2f((310 - cx) * sx + cx, (290 - cy) * sy + cy);
+       glEnd();
+   }
+   ```
+   - Sets the color to light green.
+   - Defines a center point (`cx`, `cy`) around which scaling occurs.
+   - For each vertex:
+     1. Translates the point relative to the center point
+     2. Applies the scaling factors (`sx`, `sy`)
+     3. Translates back to the original coordinate system
+   - This ensures scaling happens around the center point rather than the origin.
+
+4. **Rotation Function**:
+   ```cpp
+   void rotate_shape(float angle) {
+       glColor3f(0.5f, 0.5f, 1.0f); // Light blue
+       glBegin(GL_QUADS);
+       float cx = 290, cy = 310;
+       float rad = angle * 3.14159f / 180.0f;
+       float cosA = cos(rad);
+       float sinA = sin(rad);
+       glVertex2f(cosA * (260 - cx) - sinA * (290 - cy) + cx, 
+                  sinA * (260 - cx) + cosA * (290 - cy) + cy);
+       glVertex2f(cosA * (270 - cx) - sinA * (330 - cy) + cx, 
+                  sinA * (270 - cx) + cosA * (330 - cy) + cy);
+       glVertex2f(cosA * (320 - cx) - sinA * (330 - cy) + cx, 
+                  sinA * (320 - cx) + cosA * (330 - cy) + cy);
+       glVertex2f(cosA * (310 - cx) - sinA * (290 - cy) + cx, 
+                  sinA * (310 - cx) + cosA * (290 - cy) + cy);
+       glEnd();
+   }
+   ```
+   - Sets the color to light blue.
+   - Converts the angle from degrees to radians.
+   - Pre-computes sine and cosine values for efficiency.
+   - For each vertex:
+     1. Translates the point relative to the center point (`cx`, `cy`)
+     2. Applies the 2D rotation matrix: [x' = x*cos(θ) - y*sin(θ), y' = x*sin(θ) + y*cos(θ)]
+     3. Translates back to the original coordinate system
+   - This implements rotation around a specific center point rather than the origin.
+
+5. **X-Axis Reflection Function**:
+   ```cpp
+   void reflect_shape_x() {
+       glColor3f(1.0f, 1.0f, 0.5f); // Light yellow
+       glBegin(GL_QUADS);
+       float cy = 310; // Reflection axis is y=cy
+       glVertex2f(260, 2*cy - 290);
+       glVertex2f(270, 2*cy - 330);
+       glVertex2f(320, 2*cy - 330);
+       glVertex2f(310, 2*cy - 290);
+       glEnd();
+   }
+   ```
+   - Sets the color to light yellow.
+   - Reflects the parallelogram about the horizontal line y=310 (the center's y-coordinate).
+   - For each y-coordinate, the new position is calculated as: y' = 2*cy - y
+   - The x-coordinates remain unchanged during reflection across a horizontal axis.
+
+6. **Y-Axis Reflection Function**:
+   ```cpp
+   void reflect_shape_y() {
+       glColor3f(1.0f, 1.0f, 0.5f); // Light yellow
+       glBegin(GL_QUADS);
+       float cx = 290; // Reflection axis is x=cx
+       glVertex2f(2*cx - 260, 290);
+       glVertex2f(2*cx - 270, 330);
+       glVertex2f(2*cx - 320, 330);
+       glVertex2f(2*cx - 310, 290);
+       glEnd();
+   }
+   ```
+   - Sets the color to light yellow.
+   - Reflects the parallelogram about the vertical line x=290 (the center's x-coordinate).
+   - For each x-coordinate, the new position is calculated as: x' = 2*cx - x
+   - The y-coordinates remain unchanged during reflection across a vertical axis.
+
+7. **Display Function**:
+   ```cpp
+   void display() {
+       glClear(GL_COLOR_BUFFER_BIT);
+       
+       // Original shape (center)
+       glColor3f(1.0f, 1.0f, 1.0f); // White
+       glBegin(GL_QUADS);
+       glVertex2f(260, 290);
+       glVertex2f(270, 330);
+       glVertex2f(320, 330);
+       glVertex2f(310, 290);
+       glEnd();
+       
+       // Translated (bottom-left)
+       translate_shape(-150, -150);
+       
+       // Scaled (top-right)
+       glPushMatrix();
+       glTranslatef(150, 150, 0);
+       scale_shape(1.5f, 1.5f);
+       glPopMatrix();
+       
+       // Rotated (top-left)
+       glPushMatrix();
+       glTranslatef(-150, 150, 0);
+       rotate_shape(45);
+       glPopMatrix();
+       
+       // Reflected over y-axis (bottom-right)
+       glPushMatrix();
+       glTranslatef(150, -150, 0);
+       reflect_shape_y();
+       glPopMatrix();
+       
+       glFlush();
+   }
+   ```
+   - Clears the color buffer before drawing.
+   - Draws the original white parallelogram in the center.
+   - Draws a translated version in the bottom-left quadrant (moved by -150 units in both x and y).
+   - Uses `glPushMatrix()` and `glPopMatrix()` to isolate transformations:
+     - For the scaled version, translates to the top-right quadrant before scaling by 1.5x.
+     - For the rotated version, translates to the top-left quadrant before rotating by 45 degrees.
+     - For the reflected version, translates to the bottom-right quadrant before reflecting over the y-axis.
+   - `glFlush()` ensures all drawing commands are executed.
+
+8. **Initialization Function**:
+   ```cpp
+   void init() {
+       glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+       glMatrixMode(GL_PROJECTION);
+       gluOrtho2D(0.0, 600.0, 0.0, 600.0);
+   }
+   ```
+   - Sets the background color to black.
+   - Sets up a 2D orthographic projection with coordinates ranging from (0,0) to (600,600).
+
+9. **Main Function**:
+   ```cpp
+   int main(int argc, char** argv) {
+       glutInit(&argc, argv);
+       glutInitWindowSize(600, 600);
+       glutCreateWindow("Parallelogram Transformations");
+       init();
+       glutDisplayFunc(display);
+       glutMainLoop();
+       return 0;
+   }
+   ```
+   - Initializes the GLUT library.
+   - Creates a 600×600 pixel window titled "Parallelogram Transformations."
+   - Calls the `init()` function to set up the OpenGL environment.
+   - Registers the `display()` function as the callback for rendering.
+   - Enters the GLUT event processing loop.
+
+### Transformation Concepts Illustrated
+
+1. **Translation**: Moving an object by adding offset values to coordinates.
+   - Implementation: Adding (`tx`, `ty`) to each vertex.
+   - Example: The red parallelogram is translated by (-150, -150).
+
+2. **Scaling**: Changing the size of an object.
+   - Implementation: Multiplying coordinates by scale factors relative to a center point.
+   - Example: The green parallelogram is scaled by 1.5 times in both dimensions.
+
+3. **Rotation**: Turning an object around a center point.
+   - Implementation: Applying a rotation matrix to vertex coordinates.
+   - Example: The blue parallelogram is rotated by 45 degrees.
+
+4. **Reflection**: Mirroring an object across an axis.
+   - Implementation: Reflecting coordinates across a line (y=cy or x=cx).
+   - Example: The yellow parallelogram is reflected across the y-axis.
+
+5. **Matrix Operations**: Using OpenGL's matrix stack (`glPushMatrix()` and `glPopMatrix()`) to isolate transformations.
+   - This prevents transformations from affecting other objects in the scene.
