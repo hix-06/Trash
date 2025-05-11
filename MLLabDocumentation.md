@@ -549,5 +549,72 @@ plt.show()
    - **Why ward linkage?** Ward minimizes the variance within clusters, creating compact clusters of similar size - appropriate for medical diagnostic data where we want clearly defined groups
    - **Why random_state=44?** Ensures reproducibility of the train/test split
 
-3. **Why create dendrograms?**
-   - **Why visualize the hierarchy?** Dendrograms show how clusters merge and at what distances, revealing the hierarchical
+3. **Dendrograms**: 
+   - Why are they useful? Visualize the hierarchical structure of clusters and help determine the appropriate number of clusters.
+   - The vertical axis shows the distance or dissimilarity between clusters.
+   - The horizontal axis represents the samples.
+4. **Visualization Limitations**: 
+   - Only the first two features are plotted, which may not capture the full high-dimensional structure.
+   - The clusters shown in the scatter plots might not reflect the true clusters in the full feature space.
+5. **Note on Data Splitting**: Unlike supervised learning, there's typically no need to split data for unsupervised clustering. The split here might be to compare cluster distributions in different subsets.
+6. **Potential Data Issue**: In the code, y is set to the same as x, which doesn't use the actual class labels. This might make evaluation difficult.
+
+
+---
+
+## 7. K-Medoids Clustering
+
+```python
+from sklearn_extra.cluster import KMedoids
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+import matplotlib.pyplot as plt
+
+# Load income dataset (Why reuse this dataset? - For comparison with K-means)
+df = pd.read_csv("income.csv")
+print(df.columns)
+
+# Extract features
+features = df[['Age', 'Income($)']]
+
+# Scale features (Why? - For distance-based algorithms like K-Medoids)
+scaler = MinMaxScaler()
+df[['Age', 'Income($)']] = scaler.fit_transform(df[['Age', 'Income($)']])
+
+# Set number of clusters (Why 3? - For consistency with K-means example)
+num_clusters = 3
+
+# Apply K-Medoids clustering (Why random_state=42? - For reproducibility)
+kmedoids = KMedoids(n_clusters=num_clusters, random_state=42)
+clusters = kmedoids.fit_predict(df[['Age', 'Income($)']])
+
+# Add cluster labels to dataframe
+df['cluster'] = clusters
+
+# Show cluster centers (medoids)
+print(kmedoids.cluster_centers_, '\n')
+print(kmedoids.cluster_centers_[:, 0])
+
+# Visualize clusters
+plt.scatter(df['Age'], df['Income($)'], c=df['cluster'], cmap='rainbow')
+plt.scatter(kmedoids.cluster_centers_[:, 0], kmedoids.cluster_centers_[:, 1], 
+            s=200, c='black', marker='X', label='Medoids')
+plt.xlabel('Age')
+plt.ylabel('Income ($)')
+plt.title('K-Medoids Clustering')
+plt.legend()
+plt.show()
+```
+
+### Theoretical Notes:
+1. **Why K-Medoids vs. K-means**: 
+   - K-Medoids uses actual data points as cluster centers (medoids) rather than mean points (centroids).
+   - It's more robust to outliers and noise than K-means.
+   - It can work with any distance metric, not just Euclidean distance.
+2. **Why Feature Scaling**: Like K-means, K-Medoids uses distance calculations that are sensitive to feature scaling. MinMaxScaler normalizes features to the same 0-1 range.
+3. **Why 3 Clusters**: Chosen for consistency with the K-means example, allowing for direct comparison.
+4. **Random State**: Set to 42 for reproducibility, ensuring the same initial medoid selection each time.
+5. **Visualization**: Uses a scatter plot with different colors for clusters and marks medoids with X symbols, showing the actual data points that serve as cluster centers.
+6. **No Elbow Method**: Unlike the K-means example, this code doesn't include the elbow method to determine the optimal number of clusters.
+7. **Computational Efficiency**: K-Medoids is generally more computationally expensive than K-means, especially for large datasets.
+8. **Why sklearn_extra**: The sklearn_extra package is used because K-Medoids is not part of the core scikit-learn library.
