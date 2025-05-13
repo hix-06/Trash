@@ -420,135 +420,9 @@ The program displays:
 - Yellow circle (reflected) in bottom-left quadrant
 
 ## Table of Contents
-1. [Mouse Control Example](#mouse-control-example)
-2. [Animation Example](#animation-example)
-3. [Keyboard Control Example](#keyboard-control-example)
-
-## Mouse Control Example
-
-```cpp
-#include <iostream>
-#include <GL/glut.h>
-#include <cmath>
-
-// Circle properties
-float cx = 0.0f, cy = 0.0f;    // Center position
-float s = 0.2f;                // Size/scale
-
-// Animation properties
-float dx = 0.01f, dy = 0.01f;  // Velocity
-bool animationEnabled = false; // Animation starts paused
-
-void display() {
-    // Clear the screen
-    glClear(GL_COLOR_BUFFER_BIT);
-    
-    // Draw red circle
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glBegin(GL_POLYGON);
-    for (int i = 0; i < 360; i++) {
-        float angle = i * M_PI / 180.0f;
-        glVertex2f(cx + s * cos(angle), cy + s * sin(angle));
-    }
-    glEnd();
-    
-    // Swap buffers (double buffering)
-    glutSwapBuffers();
-}
-
-void screenToGL(int x, int y, float &glX, float &glY) {
-    // Convert screen coordinates to OpenGL coordinates
-    glX = (2.0f * x / glutGet(GLUT_WINDOW_WIDTH)) - 1.0f;
-    glY = 1.0f - (2.0f * y / glutGet(GLUT_WINDOW_HEIGHT));
-}
-
-void update(int value) {
-    // Animation logic
-    if (animationEnabled) {
-        cx += dx;
-        cy += dy;
-        
-        // Bounce off walls
-        if (cx + s > 1.0f || cx - s < -1.0f) dx = -dx;
-        if (cy + s > 1.0f || cy - s < -1.0f) dy = -dy;
-    }
-    
-    // Request redisplay
-    glutPostRedisplay();
-    
-    // Set up next timer
-    glutTimerFunc(16, update, 0);  // ~60fps
-}
-
-
-void mouse(int button, int state, int x, int y) {
-    if (state == GLUT_DOWN) {
-        float glX, glY;
-        screenToGL(x, y, glX, glY);
-        
-        if (button == GLUT_LEFT_BUTTON) {
-            // Set position
-            cx = glX;
-            cy = glY;
-        }
-        else if (button == GLUT_RIGHT_BUTTON) {
-            // Set velocity
-            dx = (cx - glX) * 0.02f;
-            dy = (cy - glY) * 0.02f;
-        }
-        
-        glutPostRedisplay();
-    }
-}
-
-void mouseMotion(int x, int y) {
-    float glX, glY;
-    screenToGL(x, y, glX, glY);
-    
-    // Update position
-    cx = glX;
-    cy = glY;
-    
-    glutPostRedisplay();
-}
-
-void init() {
-    // Set background color (white)
-    glClearColor(1.0, 1.0, 1.0, 1.0);
-    
-    // Set up projection
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(-1, 1, -1, 1);
-}
-
-int main(int argc, char** argv) {
-    // Initialize GLUT
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    glutInitWindowSize(500, 500);
-    glutCreateWindow("Circle with Mouse Control");
-    
-    // Register callbacks
-    glutDisplayFunc(display);
-    glutMouseFunc(mouse);
-    glutMotionFunc(mouseMotion);
-    glutTimerFunc(16, update, 0);
-    
-    // Initialize OpenGL settings
-    init();
-    
-    // Enter the main loop
-    glutMainLoop();
-    return 0;
-}
-```
-
-### Mouse Control Features
-- **Left Click**: Set circle position directly to the clicked location
-- **Right Click**: Set velocity direction based on the clicked position relative to circle
-- **Click and Drag**: Move the circle by dragging with the mouse
-- **Automatic Animation**: Can be enabled to make the circle bounce off screen edges
+1. [Animation Example](#animation-example)
+1. [Keyboard Control Example](#keyboard-control-example)
+3. [Mouse Control Example](#mouse-control-example) 
 
 ## Animation Example
 
@@ -797,3 +671,130 @@ int main(int argc, char** argv) {
 - **ESC**: Exit the program
 - **Key State Tracking**: Maintains state of pressed keys for smooth movement
 - **Boundary Checking**: Prevents circle from moving outside visible area
+
+
+## Mouse Control Example
+
+```cpp
+#include <iostream>
+#include <GL/glut.h>
+#include <cmath>
+
+// Circle properties
+float cx = 0.0f, cy = 0.0f;    // Center position
+float s = 0.2f;                // Size/scale
+
+// Animation properties
+float dx = 0.01f, dy = 0.01f;  // Velocity
+bool animationEnabled = false; // Animation starts paused
+
+void display() {
+    // Clear the screen
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    // Draw red circle
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glBegin(GL_POLYGON);
+    for (int i = 0; i < 360; i++) {
+        float angle = i * M_PI / 180.0f;
+        glVertex2f(cx + s * cos(angle), cy + s * sin(angle));
+    }
+    glEnd();
+    
+    // Swap buffers (double buffering)
+    glutSwapBuffers();
+}
+
+void screenToGL(int x, int y, float &glX, float &glY) {
+    // Convert screen coordinates to OpenGL coordinates
+    glX = (2.0f * x / glutGet(GLUT_WINDOW_WIDTH)) - 1.0f;
+    glY = 1.0f - (2.0f * y / glutGet(GLUT_WINDOW_HEIGHT));
+}
+
+void update(int value) {
+    // Animation logic
+    if (animationEnabled) {
+        cx += dx;
+        cy += dy;
+        
+        // Bounce off walls
+        if (cx + s > 1.0f || cx - s < -1.0f) dx = -dx;
+        if (cy + s > 1.0f || cy - s < -1.0f) dy = -dy;
+    }
+    
+    // Request redisplay
+    glutPostRedisplay();
+    
+    // Set up next timer
+    glutTimerFunc(16, update, 0);  // ~60fps
+}
+
+
+void mouse(int button, int state, int x, int y) {
+    if (state == GLUT_DOWN) {
+        float glX, glY;
+        screenToGL(x, y, glX, glY);
+        
+        if (button == GLUT_LEFT_BUTTON) {
+            // Set position
+            cx = glX;
+            cy = glY;
+        }
+        else if (button == GLUT_RIGHT_BUTTON) {
+            // Set velocity
+            dx = (cx - glX) * 0.02f;
+            dy = (cy - glY) * 0.02f;
+        }
+        
+        glutPostRedisplay();
+    }
+}
+
+void mouseMotion(int x, int y) {
+    float glX, glY;
+    screenToGL(x, y, glX, glY);
+    
+    // Update position
+    cx = glX;
+    cy = glY;
+    
+    glutPostRedisplay();
+}
+
+void init() {
+    // Set background color (white)
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    
+    // Set up projection
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(-1, 1, -1, 1);
+}
+
+int main(int argc, char** argv) {
+    // Initialize GLUT
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitWindowSize(500, 500);
+    glutCreateWindow("Circle with Mouse Control");
+    
+    // Register callbacks
+    glutDisplayFunc(display);
+    glutMouseFunc(mouse);
+    glutMotionFunc(mouseMotion);
+    glutTimerFunc(16, update, 0);
+    
+    // Initialize OpenGL settings
+    init();
+    
+    // Enter the main loop
+    glutMainLoop();
+    return 0;
+}
+```
+
+### Mouse Control Features
+- **Left Click**: Set circle position directly to the clicked location
+- **Right Click**: Set velocity direction based on the clicked position relative to circle
+- **Click and Drag**: Move the circle by dragging with the mouse
+- **Automatic Animation**: Can be enabled to make the circle bounce off screen edges
