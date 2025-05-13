@@ -330,3 +330,91 @@ glEnd();
    - (0,0) is the center of the window
    - +x goes right, +y goes up
    - Values range from -1 to 1 in both directions
+
+## OpenGL Shape Transformations: Translation, Scaling, and Reflection
+
+This code demonstrates basic OpenGL transformations by drawing a circle in each quadrant of the screen with different transformations applied.
+
+```cpp
+#include <iostream>
+#include <GL/glut.h>
+#include <cmath>
+
+void drawCircle(float cx, float cy, float s) {
+    glBegin(GL_POLYGON);  
+    for (int i = 0; i < 360; i++) {
+        float angle = i * M_PI / 180.0f;
+        glVertex2f(cx + s * cos(angle), cy + s * sin(angle));
+    }
+    glEnd();
+}
+
+void display() 
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    // 1. Original shape - top right quadrant
+    glColor3f(1.0f, 0.0f, 0.0f);  // Red color
+    glPushMatrix();  // Save the current matrix
+    drawCircle(0.3f, 0.6f, 0.2f);
+    glPopMatrix();  // Restore the matrix
+    
+    // 2. Translated shape - top left quadrant
+    glColor3f(0.0f, 1.0f, 0.0f);  // Green color
+    glPushMatrix();
+    glTranslatef(-0.6f, 0.0f, 0.0f);  // Move to the left
+    drawCircle(0.3f, 0.6f, 0.2f);
+    glPopMatrix();
+    
+    // 3. Scaled shape - bottom right quadrant
+    glColor3f(0.0f, 0.0f, 1.0f);  // Blue color
+    glPushMatrix();
+    glTranslatef(0.0f, -1.2f, 0.0f);  // Move down
+    glScalef(1.5f, 1.5f, 1.0f);  // Scale by 1.5 times
+    drawCircle(0.3f, 0.6f, 0.2f);
+    glPopMatrix();
+    
+    // 4. Reflected shape - bottom left quadrant
+    glColor3f(1.0f, 1.0f, 0.0f);  // Yellow color
+    glPushMatrix();
+    // Reflect across y-axis (multiply x by -1) and move down
+    glScalef(-1.0f, 1.0f, 1.0f);  // Reflection about y-axis
+    glTranslatef(0.0f, -1.2f, 0.0f);  // Move down
+    drawCircle(0.3f, 0.6f, 0.2f);
+    glPopMatrix();
+    
+    glFlush();
+}
+
+void init()
+{
+    glClearColor(1.0, 1.0, 1.0, 1.0);  // White background
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(-1, 1, -1, 1);  // Coordinate system: (-1,-1) to (1,1)
+}
+
+int main(int argc, char** argv)
+{
+    glutInit(&argc, argv);
+    glutInitWindowSize(500, 500);
+    glutCreateWindow("OpenGL Transformations");
+    glutDisplayFunc(display);
+    init();
+    glutMainLoop();
+    
+    return 0;
+}
+```
+
+### Transformation Methods Used
+
+1. **glTranslatef(x, y, z)** - Moves objects in coordinate space
+2. **glScalef(x, y, z)** - Resizes objects along each axis
+3. **glScalef** with negative values - Creates reflections across axes
+
+The program displays:
+- Red circle (original) in top-right quadrant
+- Green circle (translated) in top-left quadrant
+- Blue circle (scaled) in bottom-right quadrant
+- Yellow circle (reflected) in bottom-left quadrant
