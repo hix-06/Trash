@@ -1,8 +1,6 @@
 # OpenGL Shape Drawing Reference Guide
 
-This documentation organizes various OpenGL shape drawing techniques into related groups to make learning and memorization easier. By understanding the relationships between shapes, you can more easily recall how to draw any shape needed for your interview.
-
-## Base Framework
+## Base Framework For Drawing
 
 ```cpp
 #include <iostream>
@@ -309,28 +307,6 @@ glVertex2f(cx, cy - s);
 glEnd();
 ```
 
-## Memory Tips
-
-1. **Basic Structure**: Remember that most shapes use:
-   - A center point (cx, cy)
-   - A size parameter (s)
-   - glVertex2f() calls to define vertices
-
-2. **Pattern Recognition**:
-   - Regular polygons: Always use a loop with angle = i * 2 * M_PI / n (where n is number of sides)
-   - Stars: Use GL_TRIANGLE_FAN with alternating radii
-   - 3D shapes: Draw each face separately with different colors
-
-3. **Formulaic Similarities**:
-   - For any circular shape: x = cx + radius * cos(angle), y = cy + radius * sin(angle)
-   - For regular polygons: Just change the number of sides in the loop
-   - For 3D effects: Add an offset to coordinates (typically 0.3*s or 0.5*s)
-
-4. **Coordinate System Reminder**:
-   - (0,0) is the center of the window
-   - +x goes right, +y goes up
-   - Values range from -1 to 1 in both directions
-
 ## OpenGL Shape Transformations: Translation, Scaling, and Reflection
 
 This code demonstrates basic OpenGL transformations by drawing a circle in each quadrant of the screen with different transformations applied.
@@ -379,7 +355,7 @@ void display()
     glPushMatrix();
     // Reflect across y-axis (multiply x by -1) and move down
     glScalef(-1.0f, 1.0f, 1.0f);  // Reflection about y-axis
-    glTranslatef(0.0f, -1.2f, 0.0f);  // Move down
+    glTranslatef(-.5f, -.5f, 0.0f);  
     drawCircle(0.3f, 0.6f, 0.2f);
     glPopMatrix();
     
@@ -407,17 +383,139 @@ int main(int argc, char** argv)
 }
 ```
 
-### Transformation Methods Used
+```cpp
+#include <GL/glut.h>
+  
 
-1. **glTranslatef(x, y, z)** - Moves objects in coordinate space
-2. **glScalef(x, y, z)** - Resizes objects along each axis
-3. **glScalef** with negative values - Creates reflections across axes
+  
+float tx = 0;
+  
+float ty = 0;
+  
+float cx = 0.3;
+  
+float cy = 0.6;
+  
+float s = 0.2;
+  
+float scale = 1;
+  
+float angle =0;
+  
+float reflectX=1;
+  
+float reflectY=1;
+  
 
-The program displays:
-- Red circle (original) in top-right quadrant
-- Green circle (translated) in top-left quadrant
-- Blue circle (scaled) in bottom-right quadrant
-- Yellow circle (reflected) in bottom-left quadrant
+  
+void display() {
+  
+    glClear(GL_COLOR_BUFFER_BIT);
+  
+    glPushMatrix();
+  
+    glRotated(angle,0,0,1);
+  
+    glScalef(reflectX,reflectY,1);
+  
+    glScaled(scale,scale  , 0);
+  
+    glTranslated(tx, ty, 0);
+  
+    glBegin(GL_TRIANGLES);
+  
+    glColor3f(1, 0, 0);
+  
+    glVertex2f(cx - s, cy);
+  
+    glColor3f(0, .5, 0);
+  
+    glVertex2f(cx + s, cy);
+  
+    glColor3f(0, 0, .5);
+  
+    glVertex2f(cx, cy + s);
+  
+    glEnd();
+  
+    glPopMatrix();
+  
+    glFlush();
+  
+}
+  
+
+  
+void Keyboard(int key, int x, int y) {
+  
+    switch (key) {
+  
+        case GLUT_KEY_RIGHT: tx += 0.05f; break;
+  
+        case GLUT_KEY_LEFT:  tx -= 0.05f; break;
+  
+        case GLUT_KEY_UP:    ty += 0.05f; break;
+  
+        case GLUT_KEY_DOWN:  ty -= 0.05f; break;
+  
+        case GLUT_KEY_F1:    scale += .1; break;
+  
+        case GLUT_KEY_F2:    scale -= .1; break;
+  
+        case GLUT_KEY_F3:    angle += 5; break;
+  
+        case GLUT_KEY_F4:    angle -= 5; break;
+  
+        case GLUT_KEY_F10: reflectX*= -1; break;
+  
+        case GLUT_KEY_F11: reflectY*= -1; break;
+  
+
+  
+    }
+  
+    glutPostRedisplay();
+  
+}
+  
+
+  
+void init() {
+  
+    glClearColor(1, 1, 1, 1);
+  
+    glMatrixMode(GL_PROJECTION);
+  
+    glLoadIdentity();
+  
+    gluOrtho2D(-1, 1, -1, 1);
+  
+}
+  
+
+  
+int main(int argc, char** argv) {
+  
+    glutInit(&argc, argv);
+  
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+  
+    glutInitWindowSize(500, 500);
+  
+    glutCreateWindow("Title");
+  
+    init();
+  
+    glutDisplayFunc(display);
+  
+    glutSpecialFunc(Keyboard);
+  
+    glutMainLoop();
+  
+    return 0;
+  
+}
+```
 
 ## Table of Contents
 1. [Animation Example](#animation-example)
