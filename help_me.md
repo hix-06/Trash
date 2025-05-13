@@ -353,10 +353,9 @@ void display()
     // 4. Reflected shape - bottom left quadrant
     glColor3f(1.0f, 1.0f, 0.0f);  // Yellow color
     glPushMatrix();
-    // Reflect across y-axis (multiply x by -1) and move down
-    glScalef(-1.0f, 1.0f, 1.0f);  // Reflection about y-axis
+    glScalef(1.0f, -1.0f, 1.0f);  
     glTranslatef(-.5f, -.5f, 0.0f);  
-    drawCircle(0.3f, 0.6f, 0.2f);
+    drawTriangle(0.3f, 0.6f, 0.2f);
     glPopMatrix();
     
     glFlush();
