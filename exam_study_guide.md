@@ -3,7 +3,8 @@
 ## Chaotic Maps (Q1-15)
 
 **Q1: What are chaotic maps?**
-• Mathematical functions with chaotic behavior
+• Mathematical functions with
+  chaotic behavior
 • Highly sensitive to initial conditions
 • Show unpredictability over time
 
